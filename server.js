@@ -27,7 +27,7 @@ app.use(express.static('website'));
 
 // Setup Server
 const port = 8000;
-
+/* Spin up the server */
 const server = app.listen(port, listening);
 
 function listening() {
@@ -38,17 +38,24 @@ function listening() {
 // Initialize all route with a callback function
 
 // Callback function to complete GET '/all'
+app.get('/all', sendData);
+
+function sendData(request, response) {
+    response.send(projectData);
+};
 
 // Post Route
+app.post('/add', callBack);
+
+function callBack(req, res) {
+    res.send('POST received');
+};
+
+// Post a Zip
+const data = [];
+
 app.post('/addZip', addZip);
 
 function addZip(req, res) {
-
-    newEntry = {
-        zip: req.body.zip,
-        feelings: req.body.feelings
-    }
-
-    zipData.push(newEntry)
-    console.log(zipData)
+    data.push(req.body);
 };

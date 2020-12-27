@@ -1,22 +1,16 @@
-/* Global Variables */
-
 // Create a new date instance dynamically with JS
 let d = new Date();
 let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
 
 // Personal API Key for OpenWeatherMap API
-/* de81d521f112510def4e1ed18f97247c*/
-
-// Event listener to add function to existing HTML DOM element
-
-/* Function called by event listener */
-
-/* Function to GET Web API Data*/
+/* Function to GET Web API Data */
 let baseURL = 'api.openweathermap.org/data/2.5/weather?zip='
 let apiKey = '&appid=de81d521f112510def4e1ed18f97247c';
 
+// Event listener to add function to existing HTML DOM element
 document.getElementById('generate').addEventListener('click', performAction);
 
+/* Function called by event listener */
 function performAction(e) {
     const newZip = document.getElementById('zip').value;
     getZip(baseURL, newZip, apiKey)
@@ -50,9 +44,7 @@ function performAction(e) {
     const newFeelings = document.getElementById('feelings').value;
 
     getZip('/zipData', )
-        // New Syntax!
         .then(function (data) {
-            // Add data
             console.log(data);
             postData('/addZip', {
                 zip: data.zip,
