@@ -51,11 +51,23 @@ function callBack(req, res) {
     res.send('POST received');
 };
 
-// Post a Zip
-const data = [];
+// Post Function
 
-app.post('/addZip', addZip);
+app.post('/addData', addData);
 
-function addZip(req, res) {
-    data.push(req.body);
-};
+function addData(request, response) {
+
+    let data = request.body;
+
+    console.log('server side data ', data)
+
+    // date -> date
+    // temp -> temperature
+    // feelings -> user's input
+
+    projectData["date"] = data.date;
+    projectData["temp"] = data.temp;
+    projectData["feel"] = data.feeling;
+
+    response.send(projectData);
+}

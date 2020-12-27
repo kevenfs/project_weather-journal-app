@@ -4,8 +4,8 @@ let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
 
 // Personal API Key for OpenWeatherMap API
 /* Function to GET Web API Data */
-let baseURL = 'api.openweathermap.org/data/2.5/weather?zip='
-let apiKey = '&appid=de81d521f112510def4e1ed18f97247c';
+const baseURL = 'api.openweathermap.org/data/2.5/weather?zip=';
+const apiKey = '&appid=de81d521f112510def4e1ed18f97247c&units=metric';
 
 // Event listener to add function to existing HTML DOM element
 document.getElementById('generate').addEventListener('click', performAction);
@@ -31,40 +31,43 @@ const getZip = async (baseURL, zip, key) => {
 }
 
 /* Function to POST data */
-postData('/addZip', {
+postData('/addData', {
     zip: data.zip,
     feelings: data.feelings
 });
 
-/* Function to GET Project Data */
+/* Call update Method */
 document.getElementById('generate').addEventListener('click', performAction);
 
 function performAction(e) {
-    const newZip = document.getElementById('zip').value;
-    const newFeelings = document.getElementById('feelings').value;
+    e.preventDefault()
+    const ZIPcode = document.getElementById('zip').value;
+    const userResponse = document.getElementById('feelings').value;
 
-    getZip('/zipData', )
+    getWeather(baseURL, ZIPcode, APIkey)
         .then(function (data) {
-            console.log(data);
-            postData('/addZip', {
-                zip: data.zip,
-                feelings: data.feelings
-            });
+            postData('http://localhost:8000/data', {
+                    date: newDate,
+                    temp: data.main.temp,
+                    content: userResponse
+                })
+                .then(function () {
+                    UpdateUI();
+                })
         })
-        .then(
-            updateUI()
-        )
 }
 
+/* Function to GET Project Data */
 const updateUI = async () => {
     const request = await fetch('/all');
     try {
         const allData = await request.json();
-        document.getElementById('entryDate').innerHTML = allData[0].date;
-        document.getElementById('zipTemp').innerHTML = allData[0].zip;
-        document.getElementById('entryContent').innerHTML = allData[0].feelings;
-
+        console.log('All data is :');
+        console.log(allData);
+        document.getElementById('date').innerHTML = allData.theDate;
+        document.getElementById('temp').innerHTML = allData.theTemp;
+        document.getElementById('content').innerHTML = allData.theFeeling;
     } catch (error) {
-        console.log("error", error);
+        console.log('Error', error);
     }
 }
