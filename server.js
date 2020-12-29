@@ -24,6 +24,8 @@ app.use(cors());
 // Initialize the main project folder
 app.use(express.static('website'));
 
+app.post('/addData', addData);
+app.get('/all', sendData);
 
 // Setup Server
 const port = 8000;
@@ -35,25 +37,13 @@ function listening() {
     console.log(`running on localhost: ${port}`);
 };
 
-// Initialize all route with a callback function
-
 // Callback function to complete GET '/all'
-app.get('/all', sendData);
 
 function sendData(request, response) {
     response.send(projectData);
 };
 
-// Post Route
-app.post('/add', callBack);
-
-function callBack(req, res) {
-    res.send('POST received');
-};
-
 // Post Function
-
-app.post('/addData', addData);
 
 function addData(request, response) {
 

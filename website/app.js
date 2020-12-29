@@ -4,19 +4,18 @@ let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
 
 // Personal API Key for OpenWeatherMap API
 /* Function to GET Web API Data */
-const baseURL = 'api.openweathermap.org/data/2.5/weather?zip=';
+const baseURL = 'http://api.openweathermap.org/data/2.5/weather?zip=';
 const apiKey = '&appid=de81d521f112510def4e1ed18f97247c&units=metric';
 
-// Event listener to add function to existing HTML DOM element
-document.getElementById('generate').addEventListener('click', performAction);
-
 /* Function called by event listener */
-function performAction(e) {
+const performAction = async (e) => {
     const newZip = document.getElementById('zip').value;
-    getZip(baseURL, newZip, apiKey)
-
+    const data = await getWeatherDataFromAPI(baseURL, newZip, apiKey);
+    postDataToServer(data.main.temp);
+    getRecentEntryData();
 }
-const getZip = async (baseURL, zip, key) => {
+
+const getWeatherDataFromAPI = async (baseURL, zip, key) => {
 
     const res = await fetch(baseURL + zip + key)
     try {
@@ -30,44 +29,47 @@ const getZip = async (baseURL, zip, key) => {
     }
 }
 
-/* Function to POST data */
-postData('/addData', {
-    zip: data.zip,
-    feelings: data.feelings
-});
+const postDataToServer = async (temp) => {
 
-/* Call update Method */
-document.getElementById('generate').addEventListener('click', performAction);
+    const res = await fetch('http://localhost:8000/addData',
 
-function performAction(e) {
-    e.preventDefault()
-    const ZIPcode = document.getElementById('zip').value;
-    const userResponse = document.getElementById('feelings').value;
+        {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                date: newDate,
+                temp: temp,
+                feeling: document.getElementById('feelings').value
+            })
+        });
+    try {
 
-    getWeather(baseURL, ZIPcode, APIkey)
-        .then(function (data) {
-            postData('http://localhost:8000/data', {
-                    date: newDate,
-                    temp: data.main.temp,
-                    content: userResponse
-                })
-                .then(function () {
-                    UpdateUI();
-                })
-        })
+        const data = await res.json();
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.log("error", error);
+        // appropriately handle the error
+    }
 }
 
-/* Function to GET Project Data */
-const updateUI = async () => {
-    const request = await fetch('/all');
+const getRecentEntryData = async () => {
+
+    const request = await fetch('http://localhost:8000/all');
     try {
         const allData = await request.json();
         console.log('All data is :');
         console.log(allData);
-        document.getElementById('date').innerHTML = allData.theDate;
-        document.getElementById('temp').innerHTML = allData.theTemp;
-        document.getElementById('content').innerHTML = allData.theFeeling;
+        document.getElementById('date').innerHTML = allData.date;
+        document.getElementById('temp').innerHTML = allData.temp;
+        document.getElementById('content').innerHTML = allData.feel;
     } catch (error) {
         console.log('Error', error);
     }
 }
+
+// Event listener to add function to existing HTML DOM element
+document.getElementById('generate').addEventListener('click', performAction);
